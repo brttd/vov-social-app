@@ -21,8 +21,8 @@ async function getUsers() {
 		return { ...entry };
 	});
 }
-async function getUser(id) {
-	const data = await db('users').where({ id: id }).select();
+async function getUser(query) {
+	const data = await db('users').where(query).select();
 
 	if (data.length === 0) {
 		return null;
@@ -33,7 +33,7 @@ async function getUser(id) {
 
 async function parsePost(data) {
 	return {
-		user: await getUser(data.user_id),
+		user: await getUser({ id: data.user_id }),
 
 		text: data.text,
 		created_at: new Date(data.created_at),
@@ -41,8 +41,14 @@ async function parsePost(data) {
 	};
 }
 
-async function getPosts() {
-	const data = await db('posts').select().orderBy('created_at', 'desc');
+async function getPosts(query = null) {
+	let data = [];
+
+	if (query) {
+		data = await db('posts').where(query).select().orderBy('created_at', 'desc');
+	} else {
+		data = await db('posts').select().orderBy('created_at', 'desc');
+	}
 
 	return Promise.all(data.map(parsePost));
 }

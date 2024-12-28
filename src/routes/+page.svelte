@@ -26,11 +26,14 @@
 	<summary><b>Users</b></summary>
 
 	{#each data.users as user}
-		{#if user.email}
-			<p>{user.username} <code>({user.email})</code></p>
-		{:else}
-			<p>{user.username}</p>
-		{/if}
+		<p>
+			<a href="/users/{user.username}">
+				{user.username}
+				{#if user.email}
+					<code>({user.email})</code>
+				{/if}
+			</a>
+		</p>
 	{/each}
 </details>
 
@@ -40,6 +43,11 @@
 	<blockquote>
 		<pre>{post.text}</pre>
 	</blockquote>
-	<p><b>{post.user.username}</b> <Time relative timestamp={post.created_at} /></p>
+	<p>
+		<a href="/users/{post.user.username}">
+			<b>{post.user.username}</b>
+		</a>
+		<Time relative timestamp={post.created_at} />
+	</p>
 	<hr />
 {/each}
