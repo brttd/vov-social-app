@@ -6,7 +6,10 @@ export function up(knex) {
 	return knex.schema
 		.createTable('users', function (table) {
 			table.increments('id');
-			table.string('name');
+
+			table.string('username').unique().notNullable();
+			table.string('password', 255).notNullable();
+
 			table.string('email');
 		})
 		.createTable('posts', function (table) {
@@ -23,5 +26,5 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-	return knex.schema.dropTable('users').dropTable('posts');
+	return knex.schema.dropTable('posts').dropTable('users');
 }
