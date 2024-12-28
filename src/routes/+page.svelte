@@ -1,6 +1,8 @@
 <script>
 	import { enhance } from '$app/forms';
 
+	import Time from 'svelte-time';
+
 	let { data, form } = $props();
 </script>
 
@@ -36,8 +38,8 @@
 
 {#each data.posts as post}
 	<blockquote>
-		<p>{post.text}</p>
-		<p>from <b>{post.user.username}</b></p>
-		<hr />
+		<pre>{post.text}</pre>
 	</blockquote>
+	<p><b>{post.user.username}</b> <Time relative timestamp={post.created_at} /></p>
+	<hr />
 {/each}
