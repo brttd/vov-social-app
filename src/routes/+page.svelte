@@ -1,7 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
 
-	let { data } = $props();
+	let { data, form } = $props();
 </script>
 
 <h1>Hi, {data.user.username}!</h1>
@@ -11,19 +11,33 @@
 </form>
 <hr />
 
-<h2>Users</h2>
+<h2>New Post...</h2>
+<form method="post" action="?/post" use:enhance>
+	<textarea name="text"></textarea>
+	<button>Post</button>
+</form>
+<p style="color: red">{form?.message ?? ''}</p>
 
-{#each data.users as user}
-	{#if user.email}
-		<p>{user.username} <code>({user.email})</code></p>
-	{:else}
-		<p>{user.username}</p>
-	{/if}
-{/each}
+<hr />
+
+<details>
+	<summary><b>Users</b></summary>
+
+	{#each data.users as user}
+		{#if user.email}
+			<p>{user.username} <code>({user.email})</code></p>
+		{:else}
+			<p>{user.username}</p>
+		{/if}
+	{/each}
+</details>
 
 <h2>Posts</h2>
 
 {#each data.posts as post}
-	<p>{post.text}</p>
-	<p>from <b>{post.user.username}</b></p>
+	<blockquote>
+		<p>{post.text}</p>
+		<p>from <b>{post.user.username}</b></p>
+		<hr />
+	</blockquote>
 {/each}

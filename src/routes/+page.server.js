@@ -34,5 +34,37 @@ export const actions = {
 		auth.deleteSessionCookie(event);
 
 		return redirect(302, '/login');
+	},
+
+	post: async (event) => {
+		if (!event.locals.user) {
+			return fail(401);
+		}
+
+		const formData = await event.request.formData();
+		const text = formData.get('text');
+
+		if (!validatePostText(text)) {
+			return fail(400, {
+				message: 'Invalid text (min 3, max 1024 characters)'
+			});
+		}
+
+		try {
+			const newPost = await db.db('posts').insert({
+				text: text,
+				user_id: event.locals.user.id
+			});
+		} catch (e) {
+			console.error(e);
+
+			return fail(500, { message: 'An error has occurred' });
+		}
+
+		return redirect(302, '/');
 	}
 };
+
+function validatePostText(text) {
+	return typeof text === 'string' && text.length >= 3 && text.length <= 1024;
+}
