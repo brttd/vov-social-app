@@ -1,8 +1,16 @@
-import db from '$lib/server/db/index';
-import * as schema from '$lib/server/db/schema';
+import * as db from '$lib/server/db';
 
 export async function load({ params }) {
-	const data = await db.select().from(schema.users);
+	const users = await db.getUsers();
 
-	return { users: data };
+	const posts = await db.getPosts();
+
+	return {
+		users: users.map((entry) => {
+			return { ...entry };
+		}),
+		posts: posts.map((entry) => {
+			return { ...entry };
+		})
+	};
 }
