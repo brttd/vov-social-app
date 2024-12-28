@@ -18,7 +18,5 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-	return knex.schema.dropTable('sessions').alterTable('users', function (table) {
-		table.dropColumn('password');
-	});
+	return knex.schema.dropTable('sessions');
 }
