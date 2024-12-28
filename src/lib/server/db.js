@@ -31,27 +31,29 @@ async function getUser(id) {
 	return { ...data[0] };
 }
 
+async function parsePost(data) {
+	return {
+		user: await getUser(data.user_id),
+
+		text: data.text,
+		created_at: new Date(data.created_at),
+		updated_at: new Date(data.updated_at)
+	};
+}
+
 async function getPosts() {
-	const data = await db('posts').select();
+	const data = await db('posts').select().orderBy('created_at', 'desc');
 
-	return Promise.all(
-		data.map(async (entry) => {
-			const user = await getUser(entry.user_id);
-
-			return { ...entry, user: user };
-		})
-	);
+	return Promise.all(data.map(parsePost));
 }
 async function getPost(id) {
-	const data = await db('users').where({ id: id }).select();
+	const data = await db('users').where({ id: id }).first();
 
 	if (data.length === 0) {
 		return null;
 	}
 
-	const user = await getUser(data[0].user_id);
-
-	return { ...data[0], user: user };
+	return await parsePost(data);
 }
 
 export default db;
