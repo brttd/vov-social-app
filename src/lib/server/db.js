@@ -55,4 +55,4 @@ async function getPost(id) {
 }
 
 export default db;
-export { getUser, getUsers, getPost, getPosts };
+export { db, getUser, getUsers, getPost, getPosts };
