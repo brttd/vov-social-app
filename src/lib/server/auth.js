@@ -109,7 +109,8 @@ export async function invalidateSession(sessionId) {
 export function setSessionCookie(event, token, expiresAt) {
 	event.cookies.set(sessionCookieName, token, {
 		expires: expiresAt,
-		path: '/'
+		path: '/',
+		secure: false
 	});
 }
 
