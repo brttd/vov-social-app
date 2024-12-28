@@ -3,7 +3,7 @@ import { DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME } from '$env/static/private
 import knex from 'knex';
 
 const db = knex({
-	client: 'mysql',
+	client: 'mysql2',
 
 	connection: {
 		host: DB_HOST || 'localhost',

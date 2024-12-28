@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 config();
 
 const primary = {
-	client: 'mysql',
+	client: 'mysql2',
 
 	connection: {
 		host: process.env.DB_HOST || 'localhost',
