@@ -4,8 +4,6 @@
 	let { data } = $props();
 </script>
 
-<a href="/">Home</a>
-
 <h1>{data.account.username}</h1>
 
 <h2>Posts...</h2>
