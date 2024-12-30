@@ -1,9 +1,22 @@
 <script>
 	import { enhance } from '$app/forms';
+	import { invalidate } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	import Time from 'svelte-time';
 
 	let { data, form } = $props();
+
+	onMount(() => {
+		// Every 30 seconds, reload the posts list
+		const timer = setInterval(() => {
+			invalidate('app:posts');
+		}, 1000 * 30);
+
+		return () => {
+			clearInterval(timer);
+		};
+	});
 </script>
 
 <h1>Hi, {data.user.username}!</h1>

@@ -7,6 +7,8 @@ export async function load(event) {
 		return redirect(302, '/login');
 	}
 
+	event.depends('app:posts');
+
 	const users = await db.getUsers();
 
 	const posts = await db.getPosts();
