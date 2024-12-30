@@ -12,8 +12,6 @@ export async function load(event) {
 	const posts = await db.getPosts();
 
 	return {
-		user: event.locals.user,
-
 		users: users.map((entry) => {
 			return { ...entry };
 		}),
