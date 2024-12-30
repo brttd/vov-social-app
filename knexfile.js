@@ -10,6 +10,9 @@ const primary = {
 		user: process.env.DB_USER || 'root',
 		password: process.env.DB_PASS || '',
 		database: process.env.DB_NAME || ''
+	},
+	migrations: {
+		stub: 'migration.stub'
 	}
 };
 
