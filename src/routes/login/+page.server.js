@@ -61,25 +61,41 @@ export const actions = {
 
 	register: async (event) => {
 		const formData = await event.request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
+
+		let username = formData.get('username');
+		let email = formData.get('email');
+		let password = formData.get('password');
 
 		if (!validateUsername(username)) {
-			return fail(400, { message: 'Invalid username' });
+			return fail(400, {
+				message: 'Invalid username (min 3, max 31 characters, alphanumeric only)'
+			});
+		}
+		if (!validateEmail(email)) {
+			return fail(400, {
+				message: 'Invalid email'
+			});
 		}
 		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password' });
+			return fail(400, {
+				message: 'Invalid password (min 6, max 255 characters)'
+			});
 		}
+
+		username = username.trim();
+		email = email.trim();
+		password = password.trim();
 
 		const existingUser = await db
 			.db('users')
 			.where({
 				username: username
 			})
+			.orWhere({ email: email })
 			.first();
 
 		if (existingUser) {
-			return fail(400, { message: 'Username already in use' });
+			return fail(400, { message: 'Username or email already in use' });
 		}
 
 		const passwordHash = await hash(password, {
@@ -93,6 +109,7 @@ export const actions = {
 		try {
 			const newUser = await db.db('users').insert({
 				username: username,
+				email: email,
 				password: passwordHash
 			});
 
@@ -124,4 +141,18 @@ function validateUsername(username) {
 
 function validatePassword(password) {
 	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
+}
+
+function validateEmail(email) {
+	// TODO: Do something better than regex validation
+	return (
+		typeof email === 'string' &&
+		email.length > 3 &&
+		email.length <= 255 &&
+		email
+			.toLowerCase()
+			.match(
+				/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+			)
+	);
 }
