@@ -4,6 +4,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import * as db from '$lib/server/db';
 
+import * as emailer from '$lib/server/email';
+
 export const load = async (event) => {
 	if (event.locals.user) {
 		return redirect(302, '/');
@@ -120,6 +122,15 @@ export const actions = {
 			const session = await auth.createSession(sessionToken, userId);
 
 			auth.setSessionCookie(event, sessionToken, session.expires_at);
+
+			/*
+			This isn't needed
+			emailer.send({
+				to: email,
+				subject: 'VOVLE Account Created!',
+				text: 'Welcome to VOVLE'
+			});
+			*/
 		} catch (e) {
 			console.error(e);
 
