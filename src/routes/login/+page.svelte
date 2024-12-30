@@ -16,7 +16,10 @@
 		tab = 'register';
 	}}>Register</button
 >
+<br />
+<a href="/login/forgot-password">Forgot Password</a>
 <hr />
+
 {#if tab === 'login'}
 	<form method="post" action="?/login" use:enhance>
 		<label>
