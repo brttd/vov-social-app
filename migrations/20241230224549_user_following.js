@@ -9,6 +9,8 @@ export function up(knex) {
 
 		table.integer('follows_user_id').unsigned().notNullable();
 		table.foreign('follows_user_id').references('id').inTable('users');
+
+		table.unique(['user_id', 'follows_user_id']);
 	});
 }
 
