@@ -12,7 +12,5 @@
 <h2>Posts...</h2>
 
 {#each data.posts as post}
-	{#each data.posts as post}
-		<Post {...post} />
-	{/each}
+	<Post {...post} />
 {/each}
