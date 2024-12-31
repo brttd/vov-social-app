@@ -75,7 +75,7 @@
 </script>
 
 <form>
-	<textarea bind:value={text} disabled={mode !== 'drafting'}></textarea>
+	<textarea class:reply rows="4" bind:value={text} disabled={mode !== 'drafting'}></textarea>
 	<br />
 	<button onclick={post} disabled={!textValid || mode !== 'drafting'}>Post</button>
 	{text.length} / 1024 characters
@@ -94,6 +94,13 @@
 {/if}
 
 <style>
+	textarea {
+		width: 100%;
+		max-width: 100ch;
+	}
+	textarea.reply {
+		max-width: 60ch;
+	}
 	p.error {
 		color: red;
 	}

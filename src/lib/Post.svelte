@@ -97,7 +97,7 @@
 
 {#if editable && editing}
 	<form>
-		<textarea bind:value={newText} disabled={mode !== 'drafting'}></textarea>
+		<textarea rows="4" bind:value={newText} disabled={mode !== 'drafting'}></textarea>
 		<br />
 		<button onclick={updatePost} disabled={!textValid || mode !== 'drafting'}>Update</button>
 		{#if mode === 'updating'}
@@ -147,6 +147,10 @@
 <hr />
 
 <style>
+	pre {
+		max-width: 100%;
+		white-space: pre-wrap;
+	}
 	.error {
 		color: red;
 	}
