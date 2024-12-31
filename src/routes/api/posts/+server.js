@@ -151,7 +151,7 @@ export async function PATCH({ request, locals, url }) {
 			id: data.id,
 			user_id: locals.user.id
 		})
-		.first('id');
+		.first(['id', 'text', 'updated_at']);
 
 	if (!existingPost) {
 		return error(400, {
@@ -162,13 +162,22 @@ export async function PATCH({ request, locals, url }) {
 	}
 
 	try {
+		await db('post_history').insert({
+			post_id: existingPost.id,
+			text: existingPost.text,
+
+			// Set it to the actual time the post was either created, or last edited
+			created_at: existingPost.updated_at
+		});
+
 		const post = await db('posts')
 			.where({
 				id: existingPost.id,
 				user_id: locals.user.id
 			})
 			.update({
-				text: data.text
+				text: data.text,
+				updated_at: new Date(Date.now())
 			});
 
 		return json({

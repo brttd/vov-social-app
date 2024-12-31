@@ -1,12 +1,22 @@
 import { json } from '@sveltejs/kit';
 import db from '$lib/server/db';
 
-function formatPost(data) {
+function formatEdit(data) {
+	return {
+		text: data.text,
+
+		time: data.created_at
+	};
+}
+
+function formatPost(data, edits) {
 	return {
 		user: {
 			id: data.user_id,
 			username: data.user_username
 		},
+
+		edits: edits.map(formatEdit),
 
 		id: data.id,
 		text: data.text,
@@ -34,7 +44,12 @@ export async function GET({ params }) {
 
 	const data = await query.first(select);
 
+	const edits = await db('post_history')
+		.where({ post_id: data.id })
+		.orderBy('created_at', 'desc')
+		.select(['text', 'created_at']);
+
 	return json({
-		data: formatPost(data)
+		data: formatPost(data, edits)
 	});
 }

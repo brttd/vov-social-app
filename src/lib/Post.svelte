@@ -3,14 +3,24 @@
 	import Time from 'svelte-time';
 
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 
-	let { preview = true, reply = false, id, text, user, created_at, updated_at } = $props();
+	let {
+		preview = true,
+		reply = false,
+		id,
+		text,
+		user,
+		created_at,
+		updated_at,
+		edits = []
+	} = $props();
 
 	const editable = page.data.user && page.data.user.id === user.id;
 
 	let editing = $state(false);
 
-	let newText = $state(text);
+	let newText = $state('');
 	let textValid = $derived(validatePost.text(text));
 
 	// 'drafting': User is typing updating post
@@ -79,6 +89,10 @@
 	}
 
 	function deletePost() {}
+
+	onMount(() => {
+		newText = text;
+	});
 </script>
 
 {#if editable && editing}
@@ -105,6 +119,15 @@
 	</blockquote>
 {/if}
 
+{#if !editing && edits && edits.length > 0}
+	<details>
+		<summary>Edited {edits.length} times</summary>
+		{#each edits as edit}
+			<blockquote><pre>{edit.text}</pre></blockquote>
+			<hr />
+		{/each}
+	</details>
+{/if}
 <p>
 	{#if editable}
 		<button
