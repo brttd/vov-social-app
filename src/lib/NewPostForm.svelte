@@ -1,5 +1,6 @@
 <script>
 	import { post as validatePost } from '$lib/validate.js';
+	import { invalidate } from '$app/navigation';
 
 	let text = $state('');
 	let textValid = $derived(validatePost.text(text));
@@ -37,6 +38,8 @@
 					text = '';
 
 					mode = 'posted';
+
+					invalidate('app:posts');
 
 					postId = result.data.id;
 
