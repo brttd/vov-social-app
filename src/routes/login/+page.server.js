@@ -2,7 +2,9 @@ import { hash, verify } from '@node-rs/argon2';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { fail, redirect } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
-import * as db from '$lib/server/db';
+import db from '$lib/server/db';
+
+import * as validate from '$lib/validate.js';
 
 import * as emailer from '$lib/server/email';
 
@@ -20,13 +22,13 @@ export const actions = {
 		const username = formData.get('username');
 		const password = formData.get('password');
 
-		if (!validateUsername(username)) {
+		if (!validate.user.username(username)) {
 			return fail(400, {
 				message: 'Invalid username (min 3, max 31 characters, alphanumeric only)'
 			});
 		}
 
-		if (!validatePassword(password)) {
+		if (!validate.user.password(password)) {
 			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
 		}
 
@@ -68,7 +70,7 @@ export const actions = {
 		let email = formData.get('email');
 		let password = formData.get('password');
 
-		if (!validateUsername(username)) {
+		if (!validate.user.username(username)) {
 			return fail(400, {
 				message: 'Invalid username (min 3, max 31 characters, alphanumeric only)'
 			});
@@ -78,7 +80,7 @@ export const actions = {
 				message: 'Invalid email'
 			});
 		}
-		if (!validatePassword(password)) {
+		if (!validate.user.password(password)) {
 			return fail(400, {
 				message: 'Invalid password (min 6, max 255 characters)'
 			});
@@ -109,7 +111,7 @@ export const actions = {
 		});
 
 		try {
-			const newUser = await db.db('users').insert({
+			const newUser = await db('users').insert({
 				username: username,
 				email: email,
 				password: passwordHash
@@ -140,30 +142,3 @@ export const actions = {
 		return redirect(302, '/');
 	}
 };
-
-function validateUsername(username) {
-	return (
-		typeof username === 'string' &&
-		username.length >= 3 &&
-		username.length <= 31 &&
-		/^[a-z0-9_-]+$/.test(username)
-	);
-}
-
-function validatePassword(password) {
-	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
-}
-
-function validateEmail(email) {
-	// TODO: Do something better than regex validation
-	return (
-		typeof email === 'string' &&
-		email.length > 3 &&
-		email.length <= 255 &&
-		email
-			.toLowerCase()
-			.match(
-				/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
-			)
-	);
-}

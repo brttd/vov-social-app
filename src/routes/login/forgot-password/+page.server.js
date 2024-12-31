@@ -12,7 +12,7 @@ export const load = async (event) => {
 
 	if (token) {
 		try {
-			const password_reset = await db.db('password_reset').where({ token: token }).first();
+			const password_reset = await db('password_reset').where({ token: token }).first();
 
 			if (!password_reset) {
 				return {
@@ -30,8 +30,7 @@ export const load = async (event) => {
 				};
 			}
 
-			const existingUser = await db
-				.db('users')
+			const existingUser = await db('users')
 				.where({
 					id: password_reset.user_id
 				})
@@ -65,8 +64,7 @@ export const actions = {
 			});
 		}
 
-		const existingUser = await db
-			.db('users')
+		const existingUser = await db('users')
 			.where({
 				username: username
 			})
@@ -81,8 +79,7 @@ export const actions = {
 
 		try {
 			// Remove any exisiting password reset tokens
-			await db
-				.db('password_reset')
+			await db('password_reset')
 				.where({
 					user_id: existingUser.id
 				})
@@ -91,7 +88,7 @@ export const actions = {
 			// Create a new reset token
 			const token = generateToken();
 
-			await db.db('password_reset').insert({
+			await db('password_reset').insert({
 				user_id: existingUser.id,
 				token: token,
 				expires_at: new Date(Date.now() + 1000 * 60 * 60 * 2) // Make token work for 2 hours
@@ -125,7 +122,7 @@ export const actions = {
 		}
 
 		try {
-			const password_reset = await db.db('password_reset').where({ token: token }).first();
+			const password_reset = await db('password_reset').where({ token: token }).first();
 
 			if (!password_reset) {
 				return fail(400, { message: 'Reset password token not valid' });
@@ -137,8 +134,7 @@ export const actions = {
 				return fail(400, { message: 'Reset password token has expired' });
 			}
 
-			const existingUser = await db
-				.db('users')
+			const existingUser = await db('users')
 				.where({
 					id: password_reset.user_id
 				})
@@ -156,11 +152,10 @@ export const actions = {
 				parallelism: 1
 			});
 
-			await db.db('users').where({ id: password_reset.user_id }).update({ password: passwordHash });
+			await db('users').where({ id: password_reset.user_id }).update({ password: passwordHash });
 
 			// Remove the password reset token(s)
-			await db
-				.db('password_reset')
+			await db('password_reset')
 				.where({
 					user_id: password_reset.user_id
 				})

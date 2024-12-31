@@ -1,4 +1,4 @@
-import * as db from '$lib/server/db';
+import db from '$lib/server/db';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
 
@@ -26,7 +26,7 @@ export async function createSession(token, userId) {
 		expires_at: new Date(Date.now() + DAY_IN_MS * sessionLength)
 	};
 
-	await db.db('sessions').insert(session);
+	await db('sessions').insert(session);
 
 	return session;
 }
@@ -34,8 +34,7 @@ export async function createSession(token, userId) {
 export async function validateSessionToken(token) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 
-	const data = await db
-		.db('sessions')
+	const data = await db('sessions')
 		.innerJoin('users', 'users.id', 'sessions.user_id')
 		.where({
 			'sessions.id': sessionId
@@ -68,8 +67,7 @@ export async function validateSessionToken(token) {
 
 	if (Date.now() >= session.expires_at.getTime()) {
 		// It it's expired, remove the DB entry and return empty session / user
-		await db
-			.db('sessions')
+		await db('sessions')
 			.where({
 				id: sessionId
 			})
@@ -86,7 +84,7 @@ export async function validateSessionToken(token) {
 		// Extend the expiry
 		session.expires_at = new Date(Date.now() + DAY_IN_MS * sessionLength);
 
-		await db.db('sessions').where({ id: sessionId }).update({
+		await db('sessions').where({ id: sessionId }).update({
 			expires_at: session.expires_at
 		});
 	}
@@ -98,8 +96,7 @@ export async function validateSessionToken(token) {
 }
 
 export async function invalidateSession(sessionId) {
-	await db
-		.db('sessions')
+	await db('sessions')
 		.where({
 			id: sessionId
 		})
