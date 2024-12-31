@@ -1,5 +1,9 @@
 <script>
+	import { page } from '$app/state';
+
 	let { id, following = false } = $props();
+
+	const isSelf = page.data.user && page.data.user.id === id;
 
 	let mode = $state('');
 	let errorMessage = $state('');
@@ -52,23 +56,26 @@
 	}
 </script>
 
-<button disabled={mode === 'updating'} onclick={toggle}>
-	{#if following}
-		{#if mode === 'updating'}
-			Unfollowing...
+{#if isSelf}
+	<!-- can't follow yourself -->{:else}
+	<button disabled={mode === 'updating'} onclick={toggle}>
+		{#if following}
+			{#if mode === 'updating'}
+				Unfollowing...
+			{:else}
+				Unfollow
+			{/if}
+		{:else if mode === 'updating'}
+			Following...
 		{:else}
-			Unfollow
+			Follow
 		{/if}
-	{:else if mode === 'updating'}
-		Following...
-	{:else}
-		Follow
-	{/if}
-</button>
+	</button>
 
-{#if errorMessage}
-	<br />
-	<p class="error">{errorMessage}</p>
+	{#if errorMessage}
+		<br />
+		<p class="error">{errorMessage}</p>
+	{/if}
 {/if}
 
 <style>
