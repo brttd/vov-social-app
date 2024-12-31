@@ -1,7 +1,7 @@
 import { hash, verify } from '@node-rs/argon2';
 import { fail, redirect } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
-import * as db from '$lib/server/db';
+import db from '$lib/server/db';
 
 export async function load(event) {
 	if (!event.locals.user) {
@@ -37,8 +37,7 @@ export const actions = {
 				return fail(400, { message: 'Passwords do not match' });
 			}
 
-			const existingUser = await db
-				.db('users')
+			const existingUser = await db('users')
 				.where({
 					id: event.locals.user.id
 				})
@@ -79,8 +78,7 @@ export const actions = {
 			});
 
 			try {
-				await db
-					.db('users')
+				await db('users')
 					.where({
 						id: event.locals.user.id
 					})
@@ -95,8 +93,7 @@ export const actions = {
 		}
 
 		try {
-			await db
-				.db('users')
+			await db('users')
 				.where({
 					id: event.locals.user.id
 				})
