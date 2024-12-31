@@ -13,12 +13,15 @@ export const handle = async ({ event, resolve }) => {
 
 	if (session) {
 		auth.setSessionCookie(event, sessionToken, session.expires_at);
+
+		event.locals.user = user;
+		event.locals.session = session;
 	} else {
 		auth.deleteSessionCookie(event);
-	}
 
-	event.locals.user = user;
-	event.locals.session = session;
+		event.locals.user = null;
+		event.locals.session = null;
+	}
 
 	return resolve(event);
 };

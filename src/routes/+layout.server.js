@@ -1,5 +1,5 @@
-export async function load(event) {
+export async function load({ locals }) {
 	return {
-		user: event.locals.user
+		user: locals.user
 	};
 }

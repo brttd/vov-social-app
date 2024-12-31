@@ -11,7 +11,9 @@
 	onMount(() => {
 		// Every 30 seconds, reload the posts list
 		const timer = setInterval(() => {
-			invalidate('app:posts');
+			if (document.hasFocus()) {
+				invalidate('app:posts');
+			}
 		}, 1000 * 30);
 
 		return () => {

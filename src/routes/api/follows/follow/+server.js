@@ -38,6 +38,19 @@ export async function POST({ request, locals, url }) {
 		follows_user_id: userToFollow.id
 	});
 
+	const notificationData = {
+		user_id: userToFollow.id,
+		text: `{user:${locals.user.id}} followed you`,
+		seen: false
+	};
+
+	// Check if user (who's been followed) already has a unseen notification for the follow
+	const notification = await db('user_notifications').where(notificationData).first(['id']);
+
+	if (!notification) {
+		await db('user_notifications').insert(notificationData);
+	}
+
 	return json({
 		success: true,
 

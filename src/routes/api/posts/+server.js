@@ -88,7 +88,7 @@ export async function POST({ request, locals, url }) {
 			.where({
 				id: data.reply_to
 			})
-			.first('id');
+			.first(['id', 'user_id']);
 
 		if (!existingPost) {
 			return error(400, {
@@ -99,6 +99,21 @@ export async function POST({ request, locals, url }) {
 		}
 
 		insertData.reply_to = existingPost.id;
+
+		if (existingPost.user_id != locals.user.id) {
+			const notificationData = {
+				user_id: existingPost.user_id,
+				text: `{user:${locals.user.id}} replied to your {post:${existingPost.id}}`,
+				seen: false
+			};
+
+			// Check if user (who's been replied to) already has a unseen notification for another reply on the same post
+			const notification = await db('user_notifications').where(notificationData).first(['id']);
+
+			if (!notification) {
+				await db('user_notifications').insert(notificationData);
+			}
+		}
 	}
 
 	try {

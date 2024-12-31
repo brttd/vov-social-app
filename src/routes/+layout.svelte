@@ -4,8 +4,23 @@
 	import { enhance } from '$app/forms';
 
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+	import { invalidate } from '$app/navigation';
 
 	let { data, children } = $props();
+
+	onMount(() => {
+		// Every minute and a half, check for new notifications
+		const timer = setInterval(() => {
+			if (document.hasFocus()) {
+				invalidate('app:notifications');
+			}
+		}, 1000 * 90);
+
+		return () => {
+			clearInterval(timer);
+		};
+	});
 </script>
 
 <nav>
@@ -20,6 +35,9 @@
 			href="/users/{data.user.username}"
 			class:active={page.url.pathname === '/users/' + data.user.username}>{data.user.username}</a
 		>
+		{#if data.notifications && data.notifications.length > 0}
+			(<a href="/notifications">{data.notifications.length} notifications</a>)
+		{/if}
 	{:else}
 		<a href="/login">Login</a>
 	{/if}
