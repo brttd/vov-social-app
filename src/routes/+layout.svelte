@@ -1,4 +1,6 @@
 <script>
+	import '../app.css';
+
 	import { enhance } from '$app/forms';
 
 	import { page } from '$app/state';
@@ -9,10 +11,15 @@
 <nav>
 	{#if data.user}
 		<a href="/" class:active={page.url.pathname === '/'}>Home</a>
-		<a href="/profile" class:active={page.url.pathname === '/profile'}>Profile</a>
+		<a href="/users" class:active={page.url.pathname === '/users'}>Users</a>
+		<a href="/profile" class:active={page.url.pathname === '/profile'}>Edit Profile</a>
 		<form method="post" action="/?/logout" use:enhance>
 			<button>Sign out</button>
 		</form>
+		<a
+			href="/users/{data.user.username}"
+			class:active={page.url.pathname === '/users/' + data.user.username}>{data.user.username}</a
+		>
 	{:else}
 		<a href="/login">Login</a>
 	{/if}
