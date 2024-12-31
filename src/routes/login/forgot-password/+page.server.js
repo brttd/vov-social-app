@@ -8,6 +8,10 @@ import db from '$lib/server/db';
 import * as emailer from '$lib/server/email';
 
 export const load = async (event) => {
+	if (event.locals.user) {
+		return redirect(302, '/');
+	}
+
 	const token = event.url.searchParams.get('token');
 
 	if (token) {
@@ -97,7 +101,7 @@ export const actions = {
 			emailer.send({
 				to: existingUser.email,
 				subject: 'VOVLE password reset',
-				text: 'Reset your password now... /login/forgot-password/?token=' + token
+				text: 'Reset your password now... https://vovle.me/login/forgot-password/?token=' + token
 			});
 		} catch (e) {
 			console.error(e);
