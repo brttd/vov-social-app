@@ -81,6 +81,10 @@ export const actions = {
 			return fail(400, { message: 'Incorrect username or email' });
 		}
 
+		if (!existingUser.email) {
+			return fail(400, { message: 'Account does not have an email address set' });
+		}
+
 		try {
 			// Remove any exisiting password reset tokens
 			await db('password_reset')
