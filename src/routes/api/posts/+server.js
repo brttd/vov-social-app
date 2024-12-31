@@ -119,3 +119,70 @@ export async function POST({ request, locals, url }) {
 		});
 	}
 }
+
+export async function PATCH({ request, locals, url }) {
+	if (!locals.user) {
+		return error(403, {
+			error: true,
+			message: 'You need to be logged in before posting'
+		});
+	}
+
+	const data = await request.json();
+
+	if (!data.id) {
+		return error(400, {
+			error: true,
+			field: 'id',
+			message: 'Post ID is invalid'
+		});
+	}
+
+	if (!validate.post.text(data.text)) {
+		return error(400, {
+			error: true,
+			field: 'text',
+			message: 'Text is invalid'
+		});
+	}
+
+	const existingPost = await db('posts')
+		.where({
+			id: data.id,
+			user_id: locals.user.id
+		})
+		.first('id');
+
+	if (!existingPost) {
+		return error(400, {
+			error: true,
+			field: text,
+			message: 'Post ID is invalid - post could not be found'
+		});
+	}
+
+	try {
+		const post = await db('posts')
+			.where({
+				id: existingPost.id,
+				user_id: locals.user.id
+			})
+			.update({
+				text: data.text
+			});
+
+		return json({
+			success: true,
+
+			data: {
+				id: existingPost.id
+			}
+		});
+	} catch (e) {
+		return error(500, {
+			error: true,
+			message: 'An error has occurred',
+			details: e.message
+		});
+	}
+}
