@@ -10,6 +10,8 @@ function formatPost(data) {
 
 		id: data.id,
 		text: data.text,
+		reply_to: data.reply_to,
+
 		created_at: data.created_at,
 		updated_at: data.updated_at
 	};
@@ -23,6 +25,7 @@ export async function GET({ params }) {
 	const select = [
 		'posts.id',
 		'posts.text',
+		'posts.reply_to',
 		'posts.created_at',
 		'posts.updated_at',
 		'users.id as user_id',
