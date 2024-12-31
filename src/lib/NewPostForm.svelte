@@ -2,6 +2,8 @@
 	import { post as validatePost } from '$lib/validate.js';
 	import { invalidate } from '$app/navigation';
 
+	const { reply } = $props();
+
 	let text = $state('');
 	let textValid = $derived(validatePost.text(text));
 
@@ -23,10 +25,18 @@
 
 		mode = 'posting';
 
+		const data = {
+			text: text
+		};
+
+		if (reply) {
+			data.reply_to = reply;
+		}
+
 		fetch('/api/posts', {
 			method: 'POST',
 
-			body: JSON.stringify({ text: text }),
+			body: JSON.stringify(data),
 
 			headers: {
 				'content-type': 'application/json'
@@ -39,7 +49,11 @@
 
 					mode = 'posted';
 
-					invalidate('app:posts');
+					if (reply) {
+						invalidate('app:posts:' + reply);
+					} else {
+						invalidate('app:posts');
+					}
 
 					postId = result.data.id;
 
