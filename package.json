@@ -4,6 +4,8 @@
 	"type": "module",
 	"scripts": {
 		"migrate": "knex migrate:latest",
+		"migrate:up": "knex migrate:up",
+		"migrate:down": "knex migrate:down",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
