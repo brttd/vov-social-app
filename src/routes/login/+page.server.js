@@ -74,7 +74,7 @@ export const actions = {
 				message: 'Invalid username (min 3, max 31 characters, alphanumeric only)'
 			});
 		}
-		if (!validateEmail(email)) {
+		if (!validate.user.email(email)) {
 			return fail(400, {
 				message: 'Invalid email'
 			});
