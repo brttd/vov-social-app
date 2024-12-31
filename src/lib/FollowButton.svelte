@@ -37,7 +37,7 @@
 				if (result.success) {
 					following = !following;
 				} else {
-					mode = 'drafting';
+					mode = '';
 
 					throw new Error(result.message);
 				}

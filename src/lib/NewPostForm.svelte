@@ -1,6 +1,5 @@
 <script>
 	import { post as validatePost } from '$lib/validate.js';
-	import { error } from '@sveltejs/kit';
 
 	let text = $state('');
 	let textValid = $derived(validatePost.text(text));
@@ -35,6 +34,8 @@
 			.then((response) => response.json())
 			.then((result) => {
 				if (result.success) {
+					text = '';
+
 					mode = 'posted';
 
 					postId = result.data.id;
@@ -60,6 +61,7 @@
 	<textarea bind:value={text} disabled={mode !== 'drafting'}></textarea>
 	<br />
 	<button onclick={post} disabled={!textValid || mode !== 'drafting'}>Post</button>
+	{text.length} / 1024 characters
 </form>
 {#if mode === 'posting'}
 	<p>Posting...</p>
