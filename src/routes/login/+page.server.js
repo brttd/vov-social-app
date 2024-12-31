@@ -19,7 +19,7 @@ export const load = async (event) => {
 export const actions = {
 	login: async (event) => {
 		const formData = await event.request.formData();
-		const username = formData.get('username');
+		const username = formData.get('username').toLowerCase();
 		const password = formData.get('password');
 
 		if (!validate.user.username(username)) {
@@ -32,8 +32,7 @@ export const actions = {
 			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
 		}
 
-		const existingUser = await db
-			.db('users')
+		const existingUser = await db('users')
 			.where({
 				username: username
 			})
@@ -66,7 +65,7 @@ export const actions = {
 	register: async (event) => {
 		const formData = await event.request.formData();
 
-		let username = formData.get('username');
+		let username = formData.get('username').toLowerCase();
 		let email = formData.get('email');
 		let password = formData.get('password');
 
@@ -90,8 +89,7 @@ export const actions = {
 		email = email.trim();
 		password = password.trim();
 
-		const existingUser = await db
-			.db('users')
+		const existingUser = await db('users')
 			.where({
 				username: username
 			})

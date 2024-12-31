@@ -1,3 +1,4 @@
+import { fail, redirect } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 
 export const actions = {
