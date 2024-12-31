@@ -3,7 +3,7 @@ import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/enco
 import { sha256 } from '@oslojs/crypto/sha2';
 import { fail, redirect } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
-import * as db from '$lib/server/db';
+import db from '$lib/server/db';
 
 import * as emailer from '$lib/server/email';
 
