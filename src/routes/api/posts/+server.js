@@ -1,5 +1,6 @@
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import db from '$lib/server/db';
+import * as validate from '$lib/validate.js';
 
 function formatPost(data) {
 	return {
@@ -47,4 +48,44 @@ export async function GET({ locals, url }) {
 
 		data: data.map(formatPost)
 	});
+}
+
+export async function POST({ request, locals, url }) {
+	if (!locals.user) {
+		return error(403, {
+			error: true,
+			message: 'You need to be logged in before posting'
+		});
+	}
+
+	const data = await request.json();
+
+	if (!validate.post.text(data.text)) {
+		return error(400, {
+			error: true,
+			field: 'text',
+			message: 'Text is invalid'
+		});
+	}
+
+	try {
+		const post = await db('posts').insert({
+			text: data.text,
+			user_id: locals.user.id
+		});
+
+		return json({
+			success: true,
+
+			data: {
+				id: post[0]
+			}
+		});
+	} catch (e) {
+		return error(500, {
+			error: true,
+			message: 'An error has occurred',
+			details: e.message
+		});
+	}
 }
