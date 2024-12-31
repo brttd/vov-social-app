@@ -33,10 +33,12 @@ export async function GET({ locals, url }) {
 	if (url.searchParams.get('user')) {
 		query.where({ user_id: url.searchParams.get('user') });
 	} else if (locals.user) {
-		query.whereIn(
+		query
+			.whereIn(
 			'user_id',
 			db('user_follows').where({ user_id: locals.user.id }).select('follows_user_id')
-		);
+			)
+			.orWhere({ user_id: locals.user.id });
 	}
 
 	const data = await query.select(select);
