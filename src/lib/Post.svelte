@@ -2,8 +2,6 @@
 	import { post as validatePost } from '$lib/validate.js';
 	import Time from 'svelte-time';
 
-	import { PUBLIC_FILES_PREFIX } from '$env/static/public';
-
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
@@ -125,7 +123,7 @@
 {#if media && media.length > 0}
 	<div>
 		{#each media as file (file.url)}
-			<img src={PUBLIC_FILES_PREFIX + file.url} />
+			<img src={'/user-upload/' + file.url} />
 		{/each}
 	</div>
 {/if}

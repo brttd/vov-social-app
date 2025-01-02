@@ -2,8 +2,6 @@
 	import { post as validatePost } from '$lib/validate.js';
 	import { invalidate } from '$app/navigation';
 
-	import { PUBLIC_FILES_PREFIX } from '$env/static/public';
-
 	const { reply } = $props();
 
 	let text = $state('');
@@ -149,7 +147,7 @@
 		<div>
 			{#each files as file, idx (file.url)}
 				<div>
-					<img src={PUBLIC_FILES_PREFIX + file.url} />
+					<img src={'/user-upload/' + file.url} />
 					<button
 						onclick={() => {
 							files.splice(idx, 1);
