@@ -25,10 +25,8 @@
 	function toggle() {
 		mode = 'updating';
 
-		fetch(following ? '/api/follows/unfollow' : '/api/follows/follow', {
+		fetch(following ? `/api/users/${id}/unfollow` : `/api/users/${id}/follow`, {
 			method: 'POST',
-
-			body: JSON.stringify({ id: id }),
 
 			headers: {
 				'content-type': 'application/json'

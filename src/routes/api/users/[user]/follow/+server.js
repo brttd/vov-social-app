@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import db from '$lib/server/db';
 
-export async function POST({ request, locals, url }) {
+export async function POST({ request, locals, params, url }) {
 	if (!locals.user) {
 		return error(403, {
 			error: true,
@@ -9,27 +9,23 @@ export async function POST({ request, locals, url }) {
 		});
 	}
 
-	const data = await request.json();
-
-	if (!data.id) {
-		return error(400, {
-			error: true,
-			field: 'id',
-			message: 'User (to follow) ID is invalid'
-		});
-	}
-
 	const userToFollow = await db('users')
-		.where({
-			id: data.id
-		})
+		.where(
+			url.searchParams.get('lookup') === 'username'
+				? {
+						username: params.user
+					}
+				: {
+						id: params.user
+					}
+		)
 		.first('id');
 
 	if (!userToFollow) {
 		return error(400, {
 			error: true,
 			field: 'id',
-			message: 'User (to follow) ID is invalid (user not found)'
+			message: 'User (to follow) is invalid (user not found)'
 		});
 	}
 

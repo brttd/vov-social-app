@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import db from '$lib/server/db';
 
-export async function POST({ request, locals, url }) {
+export async function POST({ request, locals, params, url }) {
 	if (!locals.user) {
 		return error(403, {
 			error: true,
@@ -9,19 +9,23 @@ export async function POST({ request, locals, url }) {
 		});
 	}
 
-	const data = await request.json();
-
 	const userToUnfollow = await db('users')
-		.where({
-			id: data.id
-		})
+		.where(
+			url.searchParams.get('lookup') === 'username'
+				? {
+						username: params.user
+					}
+				: {
+						id: params.user
+					}
+		)
 		.first('id');
 
 	if (!userToUnfollow) {
 		return error(400, {
 			error: true,
 			field: 'id',
-			message: 'User (to unfollow) ID is invalid'
+			message: 'User (to unfollow) is invalid (user not found)'
 		});
 	}
 
