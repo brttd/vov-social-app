@@ -1,6 +1,27 @@
+import { basename } from 'path';
+import fs from 'node:fs/promises';
+
 import { error, json } from '@sveltejs/kit';
 import db from '$lib/server/db';
 import * as validate from '$lib/validate.js';
+
+import { FILES_PATH } from '$env/static/private';
+
+function formatEdit(data) {
+	return {
+		text: data.text,
+
+		time: data.created_at
+	};
+}
+
+function formatMedia(data) {
+	return {
+		url: data.url,
+		type: data.type === 1 ? 'image' : 'unknown',
+		time: data.created_at
+	};
+}
 
 function formatPost(data) {
 	return {
@@ -9,12 +30,16 @@ function formatPost(data) {
 			username: data.user_username
 		},
 
+		edits: data.edits.map(formatEdit),
+
 		id: data.id,
 		text: data.text,
 		reply_to: data.reply_to,
 
 		created_at: data.created_at,
-		updated_at: data.updated_at
+		updated_at: data.updated_at,
+
+		media: data.media.map(formatMedia)
 	};
 }
 
@@ -51,6 +76,37 @@ export async function GET({ locals, url }) {
 
 	const data = await query.select(select);
 
+	const ids = data.map((item) => item.id);
+
+	if (ids.length > 0) {
+		const edits = await db('post_history')
+			.whereIn('post_id', ids)
+			.select(['post_id', 'text', 'created_at']);
+
+		const media = await db('post_media')
+			.whereIn('post_id', ids)
+			.select(['post_id', 'url', 'type', 'created_at']);
+
+		for (let i = 0; i < data.length; i++) {
+			data[i].edits = [];
+			data[i].media = [];
+
+			for (let j = edits.length - 1; j >= 0; j--) {
+				if (edits[j].post_id == data[i].id) {
+					data[i].edits.push(edits[j]);
+					edits.splice(j, 1);
+				}
+			}
+
+			for (let j = media.length - 1; j >= 0; j--) {
+				if (media[j].post_id == data[i].id) {
+					data[i].media.push(media[j]);
+					media.splice(j, 1);
+				}
+			}
+		}
+	}
+
 	return json({
 		start: 0,
 		length: data.length,
@@ -82,6 +138,34 @@ export async function POST({ request, locals, url }) {
 		text: data.text,
 		user_id: locals.user.id
 	};
+
+	const tempFolder = `${locals.user.id}/temp`;
+
+	if (Array.isArray(data.files)) {
+		for (let i = 0; i < data.files.length; i++) {
+			if (typeof data.files[i] !== 'string') {
+				return error(400, {
+					error: true,
+					field: 'files',
+					message: 'Files array is invalid ([' + i + '] is not a string)'
+				});
+			}
+
+			const filename = basename(data.files[i]);
+
+			const filepath = `${tempFolder}/${filename}`;
+
+			const s = await fs.stat(`${FILES_PATH}/${filepath}`);
+
+			if (!s.isFile()) {
+				return error(400, {
+					error: true,
+					field: 'files',
+					message: 'Files array is invalid ([' + i + '] does not exist)'
+				});
+			}
+		}
+	}
 
 	if (data.reply_to) {
 		const existingPost = await db('posts')
@@ -119,11 +203,36 @@ export async function POST({ request, locals, url }) {
 	try {
 		const post = await db('posts').insert(insertData);
 
+		const postId = post[0];
+
+		if (Array.isArray(data.files) && data.files.length > 0) {
+			const postFolder = `${locals.user.id}/posts/${postId}`;
+
+			await fs.mkdir(`${FILES_PATH}/${postFolder}`, { recursive: true });
+
+			for (let i = 0; i < data.files.length; i++) {
+				const filename = basename(data.files[i]);
+
+				await fs.copyFile(
+					`${FILES_PATH}/${tempFolder}/${filename}`,
+					`${FILES_PATH}/${postFolder}/${filename}`
+				);
+
+				await fs.unlink(`${FILES_PATH}/${tempFolder}/${filename}`);
+
+				await db('post_media').insert({
+					post_id: postId,
+					type: 0,
+					url: `${postFolder}/${filename}`
+				});
+			}
+		}
+
 		return json({
 			success: true,
 
 			data: {
-				id: post[0]
+				id: postId
 			}
 		});
 	} catch (e) {

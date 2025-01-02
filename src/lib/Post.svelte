@@ -2,6 +2,8 @@
 	import { post as validatePost } from '$lib/validate.js';
 	import Time from 'svelte-time';
 
+	import { PUBLIC_FILES_PREFIX } from '$env/static/public';
+
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
@@ -13,6 +15,7 @@
 		user,
 		created_at,
 		updated_at,
+		media = [],
 		edits = []
 	} = $props();
 
@@ -119,6 +122,14 @@
 	</blockquote>
 {/if}
 
+{#if media && media.length > 0}
+	<div>
+		{#each media as file (file.url)}
+			<img src={PUBLIC_FILES_PREFIX + file.url} />
+		{/each}
+	</div>
+{/if}
+
 {#if !editing && edits && edits.length > 0}
 	<details>
 		<summary>Edited {edits.length} times</summary>
@@ -150,6 +161,10 @@
 	pre {
 		max-width: 100%;
 		white-space: pre-wrap;
+	}
+	img {
+		max-width: 512px;
+		display: inline-block;
 	}
 	.error {
 		color: red;

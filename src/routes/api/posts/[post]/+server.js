@@ -9,21 +9,31 @@ function formatEdit(data) {
 	};
 }
 
-function formatPost(data, edits) {
+function formatMedia(data) {
+	return {
+		url: data.url,
+		type: data.type === 1 ? 'image' : 'unknown',
+		time: data.created_at
+	};
+}
+
+function formatPost(data) {
 	return {
 		user: {
 			id: data.user_id,
 			username: data.user_username
 		},
 
-		edits: edits.map(formatEdit),
+		edits: data.edits.map(formatEdit),
 
 		id: data.id,
 		text: data.text,
 		reply_to: data.reply_to,
 
 		created_at: data.created_at,
-		updated_at: data.updated_at
+		updated_at: data.updated_at,
+
+		media: data.media.map(formatMedia)
 	};
 }
 
@@ -44,12 +54,17 @@ export async function GET({ params }) {
 
 	const data = await query.first(select);
 
-	const edits = await db('post_history')
+	data.edits = await db('post_history')
 		.where({ post_id: data.id })
 		.orderBy('created_at', 'desc')
 		.select(['text', 'created_at']);
 
+	data.media = await db('post_media')
+		.where({ post_id: data.id })
+		.orderBy('created_at', 'desc')
+		.select(['url', 'type', 'created_at']);
+
 	return json({
-		data: formatPost(data, edits)
+		data: formatPost(data)
 	});
 }
