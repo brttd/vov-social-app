@@ -16,8 +16,6 @@ export async function GET({ locals, params }) {
 
 	const filePath = path.resolve(FILES_PATH, path.normalize(params.path));
 
-	console.log(filePath);
-
 	// If path has been modified to a different directory
 	if (!filePath.startsWith(path.normalize(FILES_PATH))) {
 		// Then refuse to serve that file
