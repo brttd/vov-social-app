@@ -124,7 +124,7 @@
 {/if}
 
 {#if media && media.length > 0}
-	<div>
+	<div class="media">
 		{#each media as file (file.url)}
 			<img src={'/user-upload/' + file.url} />
 		{/each}
@@ -160,9 +160,16 @@
 <hr />
 
 <style>
+	textarea {
+		width: 100%;
+		max-width: 100ch;
+	}
 	pre {
 		max-width: 100%;
 		white-space: pre-wrap;
+	}
+	.media {
+		max-width: 512px;
 	}
 	img {
 		display: inline-block;
