@@ -9,6 +9,10 @@
 
 	let { data, children } = $props();
 
+	let formattedName = $derived(
+		data.user.username.substr(0, 1).toUpperCase() + data.user.username.substr(1)
+	);
+
 	onMount(() => {
 		// Every minute and a half, check for new notifications
 		const timer = setInterval(() => {
@@ -30,7 +34,7 @@
 		<a href="/profile" class:active={page.url.pathname === '/profile'}>Profile</a>
 		<a
 			href="/users/{data.user.username}"
-			class:active={page.url.pathname === '/users/' + data.user.username}>{data.user.username}</a
+			class:active={page.url.pathname === '/users/' + data.user.username}>{formattedName}</a
 		>
 		{#if data.notifications && data.notifications.length > 0}
 			(<a href="/notifications">{data.notifications.length} notifications</a>)
