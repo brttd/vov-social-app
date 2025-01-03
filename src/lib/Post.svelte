@@ -165,7 +165,6 @@
 		white-space: pre-wrap;
 	}
 	img {
-		max-width: 512px;
 		display: inline-block;
 	}
 	.error {
