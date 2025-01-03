@@ -37,7 +37,11 @@
 			class:active={page.url.pathname === '/users/' + data.user.username}>{formattedName}</a
 		>
 		{#if data.notifications && data.notifications.length > 0}
-			(<a href="/notifications">{data.notifications.length} notifications</a>)
+			<a
+				class="notifications"
+				class:active={page.url.pathname === '/notifications'}
+				href="/notifications">({data.notifications.length} notifications)</a
+			>
 		{/if}
 		<div class="seperator"></div>
 		<form method="post" action="/?/logout" use:enhance>
@@ -58,6 +62,7 @@
 
 	nav {
 		display: flex;
+		flex-wrap: wrap;
 		padding: 0.5rem 0;
 		background-color: #242031;
 	}
