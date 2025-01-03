@@ -27,10 +27,7 @@
 	{#if data.user}
 		<a href="/" class:active={page.url.pathname === '/'}>Home</a>
 		<a href="/users" class:active={page.url.pathname === '/users'}>Users</a>
-		<a href="/profile" class:active={page.url.pathname === '/profile'}>Edit Profile</a>
-		<form method="post" action="/?/logout" use:enhance>
-			<button>Sign out</button>
-		</form>
+		<a href="/profile" class:active={page.url.pathname === '/profile'}>Profile</a>
 		<a
 			href="/users/{data.user.username}"
 			class:active={page.url.pathname === '/users/' + data.user.username}>{data.user.username}</a
@@ -38,6 +35,10 @@
 		{#if data.notifications && data.notifications.length > 0}
 			(<a href="/notifications">{data.notifications.length} notifications</a>)
 		{/if}
+		<div class="seperator"></div>
+		<form method="post" action="/?/logout" use:enhance>
+			<button>Sign Out</button>
+		</form>
 	{:else}
 		<a href="/login">Login</a>
 	{/if}
@@ -46,14 +47,55 @@
 {@render children()}
 
 <style>
+	* {
+		font-family: sans-serif;
+		font-size: 1rem;
+	}
+
 	nav {
-		border-bottom: 2px solid black;
-		margin-bottom: 30px;
+		display: flex;
+		padding: 0.5rem 0;
+		background-color: #242031;
 	}
-	nav a.active {
-		opacity: 0.5;
+
+	a {
+		border: none;
+		text-decoration: none;
+		color: white;
 	}
-	nav form {
-		display: inline-block;
+
+	button {
+		border: none;
+		text-decoration: none;
+		background-color: transparent;
+		color: white;
+		appearance: none;
+		cursor: pointer;
+		padding: 0;
+	}
+
+	nav a,
+	nav button {
+		color: white;
+		margin: 0 1rem;
+		padding: 5px 0;
+	}
+	nav a:hover,
+	nav button:hover {
+		border-top: solid #504b61 2px;
+		border-bottom: solid #504b61 2px;
+	}
+	.active {
+		border-top: solid #504b61 2px;
+		border-bottom: solid #504b61 2px;
+	}
+
+	form {
+		display: contents;
+	}
+
+	.seperator {
+		width: 2px;
+		background-color: #504b61;
 	}
 </style>
