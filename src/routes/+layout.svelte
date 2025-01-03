@@ -79,15 +79,31 @@
 		color: white;
 		margin: 0 1rem;
 		padding: 5px 0;
+
+		border-top: solid transparent 2px;
+		border-bottom: solid transparent 2px;
 	}
 	nav a:hover,
 	nav button:hover {
 		border-top: solid #504b61 2px;
 		border-bottom: solid #504b61 2px;
+
+		position: relative;
+		top: 2px;
 	}
 	.active {
 		border-top: solid #504b61 2px;
 		border-bottom: solid #504b61 2px;
+	}
+
+	@media (max-width: 600px) {
+		nav {
+			justify-content: space-evenly;
+		}
+		nav a,
+		nav button {
+			margin: 0 0.5rem;
+		}
 	}
 
 	form {
