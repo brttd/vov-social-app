@@ -1,6 +1,7 @@
 <script>
 	import { post as validatePost } from '$lib/validate.js';
 	import Time from 'svelte-time';
+	import Reactions from '$lib/Reactions.svelte';
 
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
@@ -13,6 +14,8 @@
 		user,
 		created_at,
 		updated_at,
+		reaction,
+		reactions,
 		media = [],
 		edits = []
 	} = $props();
@@ -137,7 +140,7 @@
 		{/each}
 	</details>
 {/if}
-<p>
+<p style="display: inline-block">
 	{#if editable}
 		<button
 			disabled={mode === 'updating' || mode === 'updated'}
@@ -153,6 +156,7 @@
 	{/if}
 	<Time relative timestamp={created_at} />
 </p>
+<Reactions post_id={id} {reaction} {reactions} />
 <hr />
 
 <style>

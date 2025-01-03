@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import db from '$lib/server/db';
 
 function formatEdit(data) {
@@ -24,6 +24,9 @@ function formatPost(data) {
 			username: data.user_username
 		},
 
+		reaction: data.reaction,
+		reactions: data.reactions.map((item) => item.reaction_id),
+
 		edits: data.edits.map(formatEdit),
 
 		id: data.id,
@@ -37,7 +40,7 @@ function formatPost(data) {
 	};
 }
 
-export async function GET({ params }) {
+export async function GET({ locals, params }) {
 	const query = db('posts')
 		.leftJoin('users', 'users.id', 'posts.user_id')
 		.where({ 'posts.id': params.post });
@@ -54,6 +57,13 @@ export async function GET({ params }) {
 
 	const data = await query.first(select);
 
+	if (!data) {
+		return error(404, {
+			error: true,
+			message: 'Post not found'
+		});
+	}
+
 	data.edits = await db('post_history')
 		.where({ post_id: data.id })
 		.orderBy('created_at', 'desc')
@@ -63,6 +73,24 @@ export async function GET({ params }) {
 		.where({ post_id: data.id })
 		.orderBy('created_at', 'desc')
 		.select(['url', 'type', 'created_at']);
+
+	if (locals.user) {
+		data.reaction = (
+			await db('post_reactions')
+				.where({ post_id: data.id, user_id: locals.user.id })
+				.first(['reaction_id'])
+		)?.reaction_id;
+
+		data.reactions = await db('post_reactions')
+			.where({ post_id: data.id })
+			.whereNot({ user_id: locals.user.id })
+
+			.select(['reaction_id']);
+	} else {
+		data.reaction = null;
+
+		data.reactions = await db('post_reactions').where({ post_id: data.id }).select(['reaction_id']);
+	}
 
 	return json({
 		data: formatPost(data)

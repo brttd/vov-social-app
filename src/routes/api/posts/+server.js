@@ -30,6 +30,9 @@ function formatPost(data) {
 			username: data.user_username
 		},
 
+		reaction: data.reaction,
+		reactions: data.reactions.map((item) => item),
+
 		edits: data.edits.map(formatEdit),
 
 		id: data.id,
@@ -59,7 +62,7 @@ export async function GET({ locals, url }) {
 	];
 
 	if (url.searchParams.get('user')) {
-		query.where({ user_id: url.searchParams.get('user') }).where({ reply_to: null });
+		query.where({ 'posts.user_id': url.searchParams.get('user') }).where({ reply_to: null });
 	} else if (url.searchParams.get('reply')) {
 		query.where({
 			reply_to: url.searchParams.get('reply')
@@ -67,10 +70,10 @@ export async function GET({ locals, url }) {
 	} else if (locals.user) {
 		query.where({ reply_to: null }).where(function () {
 			this.whereIn(
-				'user_id',
+				'posts.user_id',
 				db('user_follows').where({ user_id: locals.user.id }).select('follows_user_id')
 			);
-			this.orWhere({ user_id: locals.user.id });
+			this.orWhere({ 'posts.user_id': locals.user.id });
 		});
 	}
 
@@ -87,9 +90,15 @@ export async function GET({ locals, url }) {
 			.whereIn('post_id', ids)
 			.select(['post_id', 'url', 'type', 'created_at']);
 
+		const reactions = await db('post_reactions')
+			.whereIn('post_id', ids)
+			.select(['post_id', 'user_id', 'reaction_id']);
+
 		for (let i = 0; i < data.length; i++) {
 			data[i].edits = [];
 			data[i].media = [];
+			data[i].reaction = null;
+			data[i].reactions = [];
 
 			for (let j = edits.length - 1; j >= 0; j--) {
 				if (edits[j].post_id == data[i].id) {
@@ -102,6 +111,18 @@ export async function GET({ locals, url }) {
 				if (media[j].post_id == data[i].id) {
 					data[i].media.push(media[j]);
 					media.splice(j, 1);
+				}
+			}
+
+			for (let j = reactions.length - 1; j >= 0; j--) {
+				if (reactions[j].post_id == data[i].id) {
+					if (locals.user && reactions[j].user_id == locals.user.id) {
+						data[i].reaction = reactions[j].reaction_id;
+					} else {
+						data[i].reactions.push(reactions[j].reaction_id);
+					}
+
+					reactions.splice(j, 1);
 				}
 			}
 		}
