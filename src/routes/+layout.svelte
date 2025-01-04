@@ -10,7 +10,7 @@
 	let { data, children } = $props();
 
 	let formattedName = $derived(
-		data.user.username.substr(0, 1).toUpperCase() + data.user.username.substr(1)
+		data.user ? data.user.username.substr(0, 1).toUpperCase() + data.user.username.substr(1) : ''
 	);
 
 	onMount(() => {
