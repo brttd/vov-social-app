@@ -46,6 +46,7 @@ export async function POST({ request, locals, url }) {
 	const fileData = await file.arrayBuffer();
 
 	await sharp(fileData)
+		.rotate() // If image has EXIF rotation, apply that
 		.resize(1024, 1024, {
 			fit: 'inside',
 			withoutEnlargement: true
