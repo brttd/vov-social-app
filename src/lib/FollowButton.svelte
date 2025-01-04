@@ -3,7 +3,7 @@
 
 	let { id, following = false } = $props();
 
-	const isSelf = page.data.user && page.data.user.id === id;
+	let isSelf = $derived(page.data.user && page.data.user.id === id);
 
 	let mode = $state('');
 	let errorMessage = $state('');
