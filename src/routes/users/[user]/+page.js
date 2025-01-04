@@ -9,8 +9,13 @@ export async function load({ params, fetch }) {
 
 	const posts = (await (await fetch(`/api/posts?user=${user.data.id}`)).json()).data;
 
+	const followers = (await (await fetch(`/api/users/${user.data.id}/followers`)).json()).data;
+	const following = (await (await fetch(`/api/users/${user.data.id}/following`)).json()).data;
+
 	return {
 		account: user.data,
-		posts: posts
+		posts: posts,
+		followers: followers,
+		following: following
 	};
 }
