@@ -30,6 +30,8 @@ function formatPost(data) {
 			username: data.user_username
 		},
 
+		reply_count: data.reply_count,
+
 		reaction: data.reaction,
 		reactions: data.reactions.map((item) => item),
 
@@ -90,6 +92,11 @@ export async function GET({ locals, url }) {
 			.whereIn('post_id', ids)
 			.select(['post_id', 'url', 'type', 'created_at']);
 
+		const replies = await db('posts')
+			.whereIn('reply_to', ids)
+			.select(['reply_to', db.raw('COUNT(*) as reply_count')])
+			.groupBy('reply_to');
+
 		const reactions = await db('post_reactions')
 			.whereIn('post_id', ids)
 			.select(['post_id', 'user_id', 'reaction_id']);
@@ -99,6 +106,14 @@ export async function GET({ locals, url }) {
 			data[i].media = [];
 			data[i].reaction = null;
 			data[i].reactions = [];
+			data[i].reply_count = 0;
+
+			for (let j = replies.length - 1; j >= 0; j--) {
+				if (replies[j].reply_to == data[i].id) {
+					data[i].reply_count += replies[j].reply_count;
+					replies.splice(j, 1);
+				}
+			}
 
 			for (let j = edits.length - 1; j >= 0; j--) {
 				if (edits[j].post_id == data[i].id) {

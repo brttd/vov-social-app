@@ -9,6 +9,7 @@
 	let {
 		preview = true,
 		reply = false,
+		reply_count = 0,
 		id,
 		text,
 		user,
@@ -157,6 +158,9 @@
 	<Time relative timestamp={created_at} />
 </p>
 <Reactions post_id={id} {reaction} {reactions} />
+{#if preview && !reply}
+	{reply_count} replies
+{/if}
 <hr />
 
 <style>
