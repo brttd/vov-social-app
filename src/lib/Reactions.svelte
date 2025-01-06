@@ -113,6 +113,7 @@
 	{#if reactions.length > 0}
 		<details>
 			<summary>
+				Like
 				{#each displayedReactions as reactionOption (reactionOption.id)}
 					<button
 						animate:flip
@@ -144,6 +145,7 @@
 			{/each}
 		</details>
 	{:else}
+		Like
 		{#each displayedReactions as reactionOption (reactionOption.id)}
 			<button
 				animate:flip
