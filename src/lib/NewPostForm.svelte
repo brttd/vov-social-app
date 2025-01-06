@@ -62,6 +62,10 @@
 				if (result.success) {
 					text = '';
 
+					while (files.length > 0) {
+						files.pop();
+					}
+
 					mode = 'posted';
 
 					if (reply) {
