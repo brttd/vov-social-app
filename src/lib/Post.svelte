@@ -141,7 +141,7 @@
 		{/each}
 	</details>
 {/if}
-<p style="display: inline-block">
+<p class="post-attribution">
 	{#if editable}
 		<button
 			disabled={mode === 'updating' || mode === 'updated'}
@@ -180,5 +180,10 @@
 	}
 	.error {
 		color: red;
+	}
+	.post-attribution {
+		margin-top: 0;
+		display: inline-block;
+		vertical-align: top;
 	}
 </style>

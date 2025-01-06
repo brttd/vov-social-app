@@ -33,7 +33,12 @@ function formatPost(data) {
 		reply_count: data.reply_count,
 
 		reaction: data.reaction,
-		reactions: data.reactions.map((item) => item),
+		reactions: data.reactions.map((item) => {
+			return {
+				reaction: item.reaction_id,
+				user: { id: item.user_id, username: item.user_username }
+			};
+		}),
 
 		edits: data.edits.map(formatEdit),
 
@@ -99,7 +104,13 @@ export async function GET({ locals, url }) {
 
 		const reactions = await db('post_reactions')
 			.whereIn('post_id', ids)
-			.select(['post_id', 'user_id', 'reaction_id']);
+			.leftJoin('users', 'users.id', 'post_reactions.user_id')
+			.select([
+				'post_reactions.post_id',
+				'post_reactions.reaction_id',
+				'users.id as user_id',
+				'users.username as user_username'
+			]);
 
 		for (let i = 0; i < data.length; i++) {
 			data[i].edits = [];
@@ -134,7 +145,7 @@ export async function GET({ locals, url }) {
 					if (locals.user && reactions[j].user_id == locals.user.id) {
 						data[i].reaction = reactions[j].reaction_id;
 					} else {
-						data[i].reactions.push(reactions[j].reaction_id);
+						data[i].reactions.push(reactions[j]);
 					}
 
 					reactions.splice(j, 1);

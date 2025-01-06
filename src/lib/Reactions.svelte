@@ -1,4 +1,6 @@
 <script>
+	import { MediaQuery } from 'svelte/reactivity';
+
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
@@ -7,6 +9,8 @@
 	import { invalidate } from '$app/navigation';
 
 	let { post_id, reaction = $bindable(null), reactions = $bindable([]) } = $props();
+
+	const touch = new MediaQuery('hover: none');
 
 	let hovering = $state(false);
 
@@ -18,8 +22,8 @@
 
 			let count = active ? 1 : 0;
 
-			for (let j = reactions.length; j >= 0; j--) {
-				if (reactions[j] === page.data.reactions[i].id) {
+			for (let j = reactions.length - 1; j >= 0; j--) {
+				if (reactions[j].reaction === page.data.reactions[i].id) {
 					count += 1;
 				}
 			}
@@ -36,8 +40,18 @@
 		return list;
 	});
 	let displayedReactions = $derived(
-		allReactions.filter((item) => hovering || item.count > 0 || item.default)
+		allReactions.filter((item) => touch.current || hovering || item.count > 0 || item.default)
 	);
+
+	function getReactDisplay(id) {
+		for (let i = 0; i < page.data.reactions.length; i++) {
+			if (page.data.reactions[i].id === id) {
+				return page.data.reactions[i].text;
+			}
+		}
+
+		return '(?)';
+	}
 
 	let mode = $state('');
 
@@ -96,21 +110,56 @@
 		hovering = false;
 	}}
 >
-	{#each displayedReactions as reactionOption (reactionOption.id)}
-		<button
-			animate:flip
-			transition:fade
-			class:active={reactionOption.active}
-			onclick={() => {
-				react(reactionOption.id);
-			}}
-		>
-			{reactionOption.text}
-			{#if reactionOption.count > 0}
-				x{reactionOption.count}
+	{#if reactions.length > 0}
+		<details>
+			<summary>
+				{#each displayedReactions as reactionOption (reactionOption.id)}
+					<button
+						animate:flip
+						transition:fade
+						class:active={reactionOption.active}
+						onclick={() => {
+							react(reactionOption.id);
+						}}
+					>
+						{reactionOption.text}
+						{#if reactionOption.count > 0}
+							x{reactionOption.count}
+						{/if}
+					</button>
+				{/each}
+			</summary>
+			{#if page.data.user && reaction}
+				<p>
+					<a href="/users/{page.data.user.username}">{page.data.user.username}</a> (You) {getReactDisplay(
+						reaction
+					)}
+				</p>
 			{/if}
-		</button>
-	{/each}
+			{#each reactions as reaction}
+				<p>
+					<a href="/users/{reaction.user.username}">{reaction.user.username}</a>
+					{getReactDisplay(reaction.reaction)}
+				</p>
+			{/each}
+		</details>
+	{:else}
+		{#each displayedReactions as reactionOption (reactionOption.id)}
+			<button
+				animate:flip
+				transition:fade
+				class:active={reactionOption.active}
+				onclick={() => {
+					react(reactionOption.id);
+				}}
+			>
+				{reactionOption.text}
+				{#if reactionOption.count > 0}
+					x{reactionOption.count}
+				{/if}
+			</button>
+		{/each}
+	{/if}
 </div>
 
 {#if errorMessage}
@@ -124,5 +173,8 @@
 	}
 	button.active {
 		background-color: lightgreen;
+	}
+	div {
+		vertical-align: top;
 	}
 </style>

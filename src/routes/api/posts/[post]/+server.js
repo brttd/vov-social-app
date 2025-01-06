@@ -25,7 +25,12 @@ function formatPost(data) {
 		},
 
 		reaction: data.reaction,
-		reactions: data.reactions.map((item) => item.reaction_id),
+		reactions: data.reactions.map((item) => {
+			return {
+				reaction: item.reaction_id,
+				user: { id: item.user_id, username: item.user_username }
+			};
+		}),
 
 		edits: data.edits.map(formatEdit),
 
@@ -82,14 +87,25 @@ export async function GET({ locals, params }) {
 		)?.reaction_id;
 
 		data.reactions = await db('post_reactions')
+			.leftJoin('users', 'users.id', 'post_reactions.user_id')
 			.where({ post_id: data.id })
 			.whereNot({ user_id: locals.user.id })
-
-			.select(['reaction_id']);
+			.select([
+				'post_reactions.reaction_id',
+				'users.id as user_id',
+				'users.username as user_username'
+			]);
 	} else {
 		data.reaction = null;
 
-		data.reactions = await db('post_reactions').where({ post_id: data.id }).select(['reaction_id']);
+		data.reactions = await db('post_reactions')
+			.leftJoin('users', 'users.id', 'post_reactions.user_id')
+			.where({ post_id: data.id })
+			.select([
+				'post_reactions.reaction_id',
+				'users.id as user_id',
+				'users.username as user_username'
+			]);
 	}
 
 	return json({
