@@ -173,6 +173,7 @@
 		color: black;
 		padding: 7px 0 7px 0;
 		display: block;
+		cursor: default;
 	}
 
 	blockquote {
@@ -186,10 +187,11 @@
 	}
 
 	.vovle {
-		width: 85vw;
+		width: 87vw;
 		padding: 1px 10px 10px 10px;
 		background-color: white;
 		margin: 7px;
+		border-radius: 4px;
 	}
 
 	.post-interactables {

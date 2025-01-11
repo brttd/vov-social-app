@@ -65,12 +65,14 @@
 		flex-wrap: wrap;
 		padding: 0.5rem 0;
 		background-color: #242031;
+		border-radius: 4px;
 	}
 
 	a {
 		border: none;
 		text-decoration: none;
 		color: white;
+		cursor: default;
 	}
 
 	button {
@@ -79,7 +81,7 @@
 		background-color: transparent;
 		color: white;
 		appearance: none;
-		cursor: pointer;
+		cursor: default;
 		padding: 0;
 	}
 
