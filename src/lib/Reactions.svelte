@@ -130,19 +130,21 @@
 					</button>
 				{/each}
 			</summary>
-			{#if page.data.user && reaction}
-				<p>
-					<a href="/users/{page.data.user.username}">{page.data.user.username}</a> (You) {getReactDisplay(
-						reaction
-					)}
-				</p>
-			{/if}
-			{#each reactions as reaction}
-				<p>
-					<a href="/users/{reaction.user.username}">{reaction.user.username}</a>
-					{getReactDisplay(reaction.reaction)}
-				</p>
-			{/each}
+			<div class="userReactList">
+				{#if page.data.user && reaction}
+					<p>
+						<a href="/users/{page.data.user.username}">{page.data.user.username}</a> (You) {getReactDisplay(
+							reaction
+						)}
+					</p>
+				{/if}
+				{#each reactions as reaction}
+					<p>
+						<a href="/users/{reaction.user.username}">{reaction.user.username}</a>
+						{getReactDisplay(reaction.reaction)}
+					</p>
+				{/each}
+			</div>
 		</details>
 	{:else}
 		Like
@@ -178,5 +180,9 @@
 	}
 	div {
 		vertical-align: top;
+	}
+
+	.userReactList p {
+		margin: 4px;
 	}
 </style>

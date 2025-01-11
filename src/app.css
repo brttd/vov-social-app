@@ -8,6 +8,11 @@ body {
 }
 */
 
+body {
+	font-family: sans-serif;
+	background-color: rgb(220, 220, 220);
+}
+
 img {
 	max-width: 100%;
 	height: auto;
