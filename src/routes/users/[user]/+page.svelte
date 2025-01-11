@@ -7,6 +7,16 @@
 
 <h1>{data.account.username}</h1>
 <FollowButton {...data.account} />
+{#if data.history && data.history.length > 0}
+	<details>
+		<summary>Previous names</summary>
+		<ul>
+			{#each data.history as history}
+				<li>{history.username}</li>
+			{/each}
+		</ul>
+	</details>
+{/if}
 <h3>({data.account.posts_count} posts)</h3>
 
 <details>

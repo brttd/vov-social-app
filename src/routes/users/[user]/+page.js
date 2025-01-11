@@ -11,11 +11,13 @@ export async function load({ params, fetch }) {
 
 	const followers = (await (await fetch(`/api/users/${user.data.id}/followers`)).json()).data;
 	const following = (await (await fetch(`/api/users/${user.data.id}/following`)).json()).data;
+	const history = (await (await fetch(`/api/users/${user.data.id}/history`)).json()).data;
 
 	return {
 		account: user.data,
 		posts: posts,
 		followers: followers,
-		following: following
+		following: following,
+		history: history
 	};
 }
