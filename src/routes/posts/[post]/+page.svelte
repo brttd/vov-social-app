@@ -12,8 +12,9 @@
 <h3>Reply...</h3>
 
 <NewPostForm reply={data.post.id} />
-<hr />
 
-{#each data.replies as reply}
-	<Post {...reply} reply={true} />
-{/each}
+<div class="post-container">
+	{#each data.replies as reply}
+		<Post {...reply} reply={true} />
+	{/each}
+</div>

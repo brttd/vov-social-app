@@ -141,7 +141,7 @@
 		{/if}
 
 		{#if !editing && edits && edits.length > 0}
-			<details>
+			<details class="edit-history">
 				<summary>Edited {edits.length} times</summary>
 				{#each edits as edit}
 					<blockquote><pre>{edit.text}</pre></blockquote>
@@ -149,6 +149,7 @@
 				{/each}
 			</details>
 		{/if}
+
 		<p class="post-attribution">
 			{#if editable}
 				<b>{user.username}</b>
@@ -193,9 +194,10 @@
 	}
 
 	.vovle {
-		width: 87vw;
+		width: 100%;
+		max-width: 87vw;
 		padding: 1px 10px 10px 10px;
-		background-color: white;
+		background-color: rgba(255, 255, 255, 0.5);
 		margin: 7px;
 		border-radius: 4px;
 	}
@@ -206,6 +208,10 @@
 		gap: 2px;
 	}
 
+	.edit-history {
+		margin-bottom: 0.5rem;
+	}
+
 	.username {
 		color: #242031;
 		text-decoration: none;
@@ -214,6 +220,7 @@
 	textarea {
 		width: 100%;
 		max-width: 100ch;
+		margin-top: 10px;
 	}
 	pre {
 		font-family: sans-serif;

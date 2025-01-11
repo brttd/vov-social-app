@@ -182,6 +182,12 @@
 		vertical-align: top;
 	}
 
+	a {
+		color: #242031;
+		text-decoration: none;
+		font-weight: bold;
+	}
+
 	.userReactList p {
 		margin: 4px;
 	}

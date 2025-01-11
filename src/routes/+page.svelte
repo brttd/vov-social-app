@@ -23,12 +23,9 @@
 </script>
 
 <h1>Hi, {data.user.username}!</h1>
-<hr />
 
 <h2>New Post...</h2>
 <NewPostForm />
-
-<hr />
 
 {#if data.posts.length === 0}
 	<h2>No posts to show...</h2>
@@ -36,7 +33,9 @@
 {:else}
 	<h2>Posts</h2>
 
-	{#each data.posts as post}
-		<Post {...post} />
-	{/each}
+	<div class="post-container">
+		{#each data.posts as post}
+			<Post {...post} />
+		{/each}
+	</div>
 {/if}

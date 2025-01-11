@@ -51,6 +51,8 @@
 
 <h2>Posts...</h2>
 
-{#each data.posts as post}
-	<Post {...post} />
-{/each}
+<div class="post-container">
+	{#each data.posts as post}
+		<Post {...post} />
+	{/each}
+</div>

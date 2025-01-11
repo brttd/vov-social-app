@@ -27,8 +27,8 @@
 	});
 </script>
 
-<nav>
-	{#if data.user}
+{#if data.user}
+	<nav>
 		<a href="/" class:active={page.url.pathname === '/'}>Home</a>
 		<a href="/users" class:active={page.url.pathname === '/users'}>Users</a>
 		<a
@@ -47,14 +47,24 @@
 		<form method="post" action="/?/logout" use:enhance>
 			<button>Sign Out</button>
 		</form>
-	{:else}
-		<a href="/login">Login</a>
-	{/if}
-</nav>
+	</nav>
+{/if}
 
-{@render children()}
+<div class="center">
+	{@render children()}
+</div>
 
 <style>
+	:global(body) {
+		background-image: linear-gradient(to bottom right, #b6cff9, #fff);
+		background-attachment: fixed;
+		min-height: 100vh;
+	}
+
+	.center {
+		margin: 0 auto;
+		max-width: 800px;
+	}
 	* {
 		font-family: sans-serif;
 		font-size: 1rem;
@@ -63,6 +73,7 @@
 	nav {
 		display: flex;
 		flex-wrap: wrap;
+		justify-content: center;
 		padding: 0.5rem 0;
 		background-color: #242031;
 		border-radius: 4px;

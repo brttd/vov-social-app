@@ -187,18 +187,19 @@
 
 <style>
 	.newPostField {
-		background-color: white;
+		background-color: rgba(255, 255, 255, 0.5);
+		border: 1px solid #242031;
 		margin: 7px;
 		padding: 10px;
 		border-radius: 4px;
-		width: 87vw;
+		max-width: 87vw;
+		width: 100%;
 	}
 	textarea {
 		width: 100%;
 		padding: 0;
 		border: solid grey 1px;
 		margin-bottom: 3px;
-		border-radius: 4px;
 	}
 	textarea.reply {
 		max-width: 60ch;
@@ -212,7 +213,6 @@
 		color: red;
 	}
 	.smallText {
-		color: grey;
 		font-size: small;
 		display: inline-block;
 	}
