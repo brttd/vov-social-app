@@ -1,44 +1,18 @@
 <script>
-	import { enhance } from '$app/forms';
+	import UsernameForm from './UsernameForm.svelte';
+	import EmailForm from './EmailForm.svelte';
+	import PasswordForm from './PasswordForm.svelte';
 
 	let changePassword = $state(false);
 
 	let { data, form } = $props();
 </script>
 
-<h1>Profile ({data.user.username})</h1>
-<form method="post" action="?/update" use:enhance>
-	<label>
-		Email
-		<input type="email" name="email" required value={data.user.email} />
-	</label>
+<h1>Account ({data.user.username})</h1>
 
-	<br />
-
-	<label>
-		<input type="checkbox" name="change_password" bind:checked={changePassword} value="yes" />
-		Change Password
-	</label>
-	<br />
-
-	{#if changePassword}
-		<label>
-			New Password
-			<input type="password" name="new_password" required />
-		</label>
-		<br />
-		<label>
-			Confirm New Password
-			<input type="password" name="confirm_password" required />
-		</label>
-		<br />
-		<label>
-			Current Password
-			<input type="password" name="current_password" required />
-		</label>
-		<br />
-	{/if}
-
-	<button>Update</button>
-</form>
-<p style="color: red">{form?.message ?? ''}</p>
+<h2>Username</h2>
+<UsernameForm></UsernameForm>
+<h2>Email</h2>
+<EmailForm></EmailForm>
+<h2>Password</h2>
+<PasswordForm></PasswordForm>
