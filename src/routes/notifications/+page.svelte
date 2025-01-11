@@ -57,12 +57,7 @@
 
 {#each list as notification, index (notification.id)}
 	<div>
-		<p
-			onclick={() => {
-				seenNotification(notification.id);
-				list.splice(index, 1);
-			}}
-		>
+		<p>
 			{@html formatText(notification)}
 		</p>
 		<button
