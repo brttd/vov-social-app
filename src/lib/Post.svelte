@@ -161,7 +161,7 @@
 		</p>
 		<div class="vovle-time"><Time relative timestamp={created_at} /></div>
 		<Reactions post_id={id} {reaction} {reactions} />
-		{#if preview && !reply}
+		{#if preview && !reply && reply_count > 0}
 			{reply_count} replies
 		{/if}
 	</div>
