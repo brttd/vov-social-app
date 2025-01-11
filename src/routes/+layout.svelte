@@ -31,10 +31,9 @@
 	{#if data.user}
 		<a href="/" class:active={page.url.pathname === '/'}>Home</a>
 		<a href="/users" class:active={page.url.pathname === '/users'}>Users</a>
-		<a href="/profile" class:active={page.url.pathname === '/profile'}>Profile</a>
 		<a
 			href="/users/{data.user.username}"
-			class:active={page.url.pathname === '/users/' + data.user.username}>{formattedName}</a
+			class:active={page.url.pathname === '/users/' + data.user.username}>Profile</a
 		>
 		{#if data.notifications && data.notifications.length > 0}
 			<a
@@ -44,6 +43,7 @@
 			>
 		{/if}
 		<div class="seperator"></div>
+		<a href="/profile" class:active={page.url.pathname === '/profile'}>Account</a>
 		<form method="post" action="/?/logout" use:enhance>
 			<button>Sign Out</button>
 		</form>
