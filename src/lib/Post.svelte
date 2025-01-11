@@ -129,7 +129,13 @@
 		{#if media && media.length > 0}
 			<div class="media">
 				{#each media as file (file.url)}
-					<img src={'/user-upload/' + file.url} />
+					{#if preview && !reply}
+						<a class="vovle-link" href="/posts/{id}"
+							><div class="post-link"><img src={'/user-upload/' + file.url} /></div></a
+						>
+					{:else}
+						<img src={'/user-upload/' + file.url} />
+					{/if}
 				{/each}
 			</div>
 		{/if}
