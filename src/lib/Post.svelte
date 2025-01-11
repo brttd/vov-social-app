@@ -100,70 +100,111 @@
 	});
 </script>
 
-{#if editable && editing}
-	<form>
-		<textarea rows="4" bind:value={newText} disabled={mode !== 'drafting'}></textarea>
-		<br />
-		<button onclick={updatePost} disabled={!textValid || mode !== 'drafting'}>Update</button>
-		{#if mode === 'updating'}
-			<span>Updating...</span>
-		{:else if mode === 'updated'}
-			<span>Updated!</span>
-		{/if}
-		{#if errorMessage}
-			<span class="error">{errorMessage}</span>
-		{/if}
-	</form>
-{:else}
-	<blockquote>
-		{#if preview && !reply}
-			<a href="/posts/{id}"><pre>{text}</pre></a>
-		{:else}
-			<pre>{text}</pre>
-		{/if}
-	</blockquote>
-{/if}
-
-{#if media && media.length > 0}
-	<div class="media">
-		{#each media as file (file.url)}
-			<img src={'/user-upload/' + file.url} />
-		{/each}
-	</div>
-{/if}
-
-{#if !editing && edits && edits.length > 0}
-	<details>
-		<summary>Edited {edits.length} times</summary>
-		{#each edits as edit}
-			<blockquote><pre>{edit.text}</pre></blockquote>
-			<hr />
-		{/each}
-	</details>
-{/if}
-<p class="post-attribution">
-	{#if editable}
-		<button
-			disabled={mode === 'updating' || mode === 'updated'}
-			onclick={() => {
-				editing = !editing;
-			}}>{editing ? 'Cancel' : 'Edit'}</button
-		>
-		<b>{user.username}</b>
+<div class="vovle">
+	{#if editable && editing}
+		<form>
+			<textarea rows="4" bind:value={newText} disabled={mode !== 'drafting'}></textarea>
+			<br />
+			<button onclick={updatePost} disabled={!textValid || mode !== 'drafting'}>Update</button>
+			{#if mode === 'updating'}
+				<span>Updating...</span>
+			{:else if mode === 'updated'}
+				<span>Updated!</span>
+			{/if}
+			{#if errorMessage}
+				<span class="error">{errorMessage}</span>
+			{/if}
+		</form>
 	{:else}
-		<a href="/users/{user.username}">
-			<b>{user.username}</b>
-		</a>
+		<blockquote>
+			{#if preview && !reply}
+				<a class="vovle-link" href="/posts/{id}"><div class="post-link"><pre>{text}</pre></div></a>
+			{:else}
+				<pre>{text}</pre>
+			{/if}
+		</blockquote>
 	{/if}
-	<Time relative timestamp={created_at} />
-</p>
-<Reactions post_id={id} {reaction} {reactions} />
-{#if preview && !reply}
-	{reply_count} replies
-{/if}
-<hr />
+
+	<div class="post-interactables">
+		{#if media && media.length > 0}
+			<div class="media">
+				{#each media as file (file.url)}
+					<img src={'/user-upload/' + file.url} />
+				{/each}
+			</div>
+		{/if}
+
+		{#if !editing && edits && edits.length > 0}
+			<details>
+				<summary>Edited {edits.length} times</summary>
+				{#each edits as edit}
+					<blockquote><pre>{edit.text}</pre></blockquote>
+					<hr />
+				{/each}
+			</details>
+		{/if}
+		<p class="post-attribution">
+			{#if editable}
+				<b>{user.username}</b>
+				<button
+					disabled={mode === 'updating' || mode === 'updated'}
+					onclick={() => {
+						editing = !editing;
+					}}
+					>{editing ? 'Cancel' : 'Edit'}
+				</button>
+			{:else}
+				<a class="username" href="/users/{user.username}">
+					<b>{user.username}</b>
+				</a>
+			{/if}
+		</p>
+		<div class="vovle-time"><Time relative timestamp={created_at} /></div>
+		<Reactions post_id={id} {reaction} {reactions} />
+		{#if preview && !reply}
+			{reply_count} replies
+		{/if}
+	</div>
+</div>
 
 <style>
+	.vovle-link {
+		text-decoration: none;
+		color: black;
+		padding: 7px 0 7px 0;
+		display: block;
+		cursor: default;
+	}
+
+	blockquote {
+		margin: 0;
+		padding: 0;
+	}
+
+	.vovle-time {
+		color: grey;
+		font-size: small;
+	}
+
+	.vovle {
+		width: 87vw;
+		padding: 1px 10px 10px 10px;
+		background-color: white;
+		margin: 7px;
+		border-radius: 4px;
+	}
+
+	.post-interactables {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.username {
+		color: #242031;
+		text-decoration: none;
+	}
+
 	textarea {
 		width: 100%;
 		max-width: 100ch;
@@ -182,7 +223,7 @@
 		color: red;
 	}
 	.post-attribution {
-		margin-top: 0;
+		margin: 0;
 		display: inline-block;
 		vertical-align: top;
 	}

@@ -136,57 +136,69 @@
 	}
 </script>
 
-<form enctype="multipart/form-data">
-	<textarea class:reply rows="4" bind:value={text} disabled={mode !== 'drafting'}></textarea>
-	<br />
-	<input
-		type="file"
-		accept="image/*"
-		multiple="true"
-		disabled={mode !== 'drafting'}
-		onchange={handleFileInputChange}
-	/>
-	<br />
-	{#if files.length > 0}
-		<div>
-			{#each files as file, idx (file.url)}
-				<div>
-					<img src={'/user-upload/' + file.url} />
-					<button
-						onclick={() => {
-							files.splice(idx, 1);
-						}}>Delete</button
-					>
-				</div>
-			{/each}
-		</div>
-	{/if}
-
-	<button onclick={post} disabled={!textValid || mode !== 'drafting'}>Post</button>
-	{text.length} / 1024 characters
-	{#if files.length > 0}
+<div class="newPostField">
+	<form enctype="multipart/form-data">
+		<textarea class:reply rows="4" bind:value={text} disabled={mode !== 'drafting'}></textarea>
 		<br />
-		{files.length} / 10 files
-	{/if}
-</form>
+		<input
+			type="file"
+			accept="image/*"
+			multiple="true"
+			disabled={mode !== 'drafting'}
+			onchange={handleFileInputChange}
+		/>
+		<br />
+		{#if files.length > 0}
+			<div>
+				{#each files as file, idx (file.url)}
+					<div>
+						<img src={'/user-upload/' + file.url} />
+						<button
+							onclick={() => {
+								files.splice(idx, 1);
+							}}>Delete</button
+						>
+					</div>
+				{/each}
+			</div>
+		{/if}
+		<div class="spacerForPostButton"></div>
+		<button onclick={post} disabled={!textValid || mode !== 'drafting'}>Post</button>
+		<div class="smallText">{text.length} / 1024 characters</div>
+		{#if files.length > 0}
+			<br />
+			{files.length} / 10 files
+		{/if}
+	</form>
 
-{#if mode === 'posting'}
-	<p>Posting...</p>
-{:else if mode === 'posted'}
-	{#if postId}
-		<p>Posted! <a href="/posts/{postId}">View your post</a></p>
-	{:else}
-		<p>Posted!</p>
+	{#if mode === 'posting'}
+		<p>Posting...</p>
+	{:else if mode === 'posted'}
+		{#if postId}
+			<p>Posted! <a href="/posts/{postId}">View your post</a></p>
+		{:else}
+			<p>Posted!</p>
+		{/if}
 	{/if}
-{/if}
-{#if errorMessage}
-	<p class="error">{errorMessage}</p>
-{/if}
+	{#if errorMessage}
+		<p class="error">{errorMessage}</p>
+	{/if}
+</div>
 
 <style>
+	.newPostField {
+		background-color: white;
+		margin: 7px;
+		padding: 10px;
+		border-radius: 4px;
+		width: 87vw;
+	}
 	textarea {
 		width: 100%;
-		max-width: 100ch;
+		padding: 0;
+		border: solid grey 1px;
+		margin-bottom: 3px;
+		border-radius: 4px;
 	}
 	textarea.reply {
 		max-width: 60ch;
@@ -198,5 +210,13 @@
 	}
 	p.error {
 		color: red;
+	}
+	.smallText {
+		color: grey;
+		font-size: small;
+		display: inline-block;
+	}
+	.spacerForPostButton {
+		height: 5px;
 	}
 </style>
