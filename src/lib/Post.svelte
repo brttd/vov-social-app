@@ -210,6 +210,7 @@
 		max-width: 100ch;
 	}
 	pre {
+		font-family: sans-serif;
 		max-width: 100%;
 		white-space: pre-wrap;
 	}
